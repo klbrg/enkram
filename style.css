@@ -87,3 +87,15 @@ textarea#message {
 .send-btn i {
     font-size: 18px;
 }
+
+.share-buttons+p a {
+    display: inline-block;
+    margin-top: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #ff6f61;
+}
+
+.share-buttons+p a:hover {
+    text-decoration: underline;
+}

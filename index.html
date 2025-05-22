@@ -70,29 +70,31 @@
                 e.preventDefault();
                 const message = document.getElementById('message').value;
                 const result = await sendKram(message);
-                const resultDiv = document.getElementById('result');
 
                 if (result.error) {
-                    resultDiv.innerHTML = `<p>Något gick fel 😢</p>`;
-                } else {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('id', result.link.split('/').pop());
-                    const encodedUrl = encodeURIComponent(url.toString());
-                    resultDiv.innerHTML = `
-  <h2>Din kram är redo 💌</h2>
-  <div class="share-buttons">
-    <button onclick="window.open('https://wa.me/?text=${encodedUrl}', '_blank')">
-      <i class="fab fa-whatsapp"></i> WhatsApp
-    </button>
-    <button onclick="window.open('https://t.me/share/url?url=${encodedUrl}', '_blank')">
-      <i class="fab fa-telegram"></i> Telegram
-    </button>
-    <button onclick="navigator.clipboard.writeText('${url}').then(() => alert('Länk kopierad!'))">
-      <i class="fas fa-link"></i> Kopiera länk
-    </button>
-  </div>
-`;
+                    document.getElementById('result').innerHTML = `<p>Något gick fel 😢</p>`;
+                    return;
                 }
+
+                const url = new URL(window.location.href);
+                url.searchParams.set('id', result.link.split('/').pop());
+                const encodedUrl = encodeURIComponent(url.toString());
+
+                document.getElementById('app').innerHTML = `
+    <h2>Din kram är redo 💌</h2>
+    <div class="share-buttons">
+      <button onclick="window.open('https://wa.me/?text=${encodedUrl}', '_blank')">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </button>
+      <button onclick="window.open('https://t.me/share/url?url=${encodedUrl}', '_blank')">
+        <i class="fab fa-telegram"></i> Telegram
+      </button>
+      <button onclick="navigator.clipboard.writeText('${url}').then(() => alert('Länk kopierad!'))">
+        <i class="fas fa-link"></i> Kopiera länk
+      </button>
+    </div>
+    <p style="margin-top: 2em;"><a href="/">💌 Skicka en ny kram</a></p>
+  `;
             });
         }
 
