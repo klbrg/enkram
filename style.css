@@ -26,6 +26,20 @@ p {
     color: #777;
 }
 
+textarea#message {
+    width: 100%;
+    max-width: 600px;
+    height: 200px;
+    font-size: 18px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+
 .share-buttons {
     display: flex;
     flex-direction: column;
