@@ -65,3 +65,25 @@ textarea#message {
 .share-buttons button:hover {
     background-color: #e0e0e0;
 }
+
+.send-btn {
+    font-size: 18px;
+    padding: 12px 20px;
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.send-btn:hover {
+    background-color: #e65b50;
+}
+
+.send-btn i {
+    font-size: 18px;
+}
