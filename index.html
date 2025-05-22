@@ -76,7 +76,6 @@
                     const url = new URL(window.location.href);
                     url.searchParams.set('id', result.link.split('/').pop());
                     const encodedUrl = encodeURIComponent(url.toString());
-                    const encodedUrl = encodeURIComponent(url.toString());
                     resultDiv.innerHTML = `
   <h2>Din kram är redo 💌</h2>
   <div class="share-buttons">
@@ -91,8 +90,6 @@
     </button>
   </div>
 `;
-
-
                 }
             });
         }
