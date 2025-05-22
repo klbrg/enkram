@@ -93,7 +93,7 @@
         <i class="fas fa-link"></i> Kopiera länk
       </button>
     </div>
-    <p style="margin-top: 2em;"><a href="/">💌 Skicka en ny kram</a></p>
+    <p style="margin-top: 2em;"><a href="/" class="share-link">💌 Skicka en ny kram</a></p>
   `;
             });
         }
@@ -102,7 +102,7 @@
             document.getElementById('app').innerHTML = `
       <h1>Du har fått en kram 🤗</h1>
       <p>${message}</p>
-      <p style="margin-top: 2em;"><a href="/">💌 Skicka en egen kram</a></p>
+    <p><a href="/" class="share-link">💌 Skicka en egen kram</a></p>
     `;
         }
 
@@ -110,7 +110,7 @@
             document.getElementById('app').innerHTML = `
       <h1>Oj då 😢</h1>
       <p>Kramen du letar efter finns inte längre.</p>
-      <p style="margin-top: 2em;"><a href="/">💌 Skicka en egen kram</a></p>
+      <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
     `;
         }
 
