@@ -17,17 +17,101 @@
 
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/faviconfavicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
     <link rel="manifest" href="/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <main class="container">
-        <h1>En kram är på väg 🤗</h1>
-        <p>Vi bygger något varmt, mänskligt och digitalt. Välkommen tillbaka snart!</p>
+    <main class="container" id="app">
+        <!-- Innehållet styrs av JavaScript -->
     </main>
+    <script>
+        async function sendKram(message) {
+            const res = await fetch('/api/sendKram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+
+            if (!res.ok) {
+                return { error: true };
+            }
+
+            return await res.json();
+        }
+
+        async function loadKram(id) {
+            const res = await fetch(`/api/getKram/${id}`);
+            if (!res.ok) return null;
+            return await res.json();
+        }
+
+        function getIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function renderForm() {
+            document.getElementById('app').innerHTML = `
+      <h1>Skicka en kram 🤗</h1>
+      <form id="kramForm">
+        <textarea id="message" placeholder="Skriv ett meddelande..." rows="4" cols="40"></textarea><br>
+        <button type="submit">Skicka</button>
+      </form>
+      <div id="result"></div>
+    `;
+
+            document.getElementById('kramForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = document.getElementById('message').value;
+                const result = await sendKram(message);
+                const resultDiv = document.getElementById('result');
+
+                if (result.error) {
+                    resultDiv.innerHTML = `<p>Något gick fel 😢</p>`;
+                } else {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('id', result.link.split('/').pop());
+                    resultDiv.innerHTML = `
+          <p>Här är din kram-länk:</p>
+          <p><a href="${url}">${url}</a></p>
+        `;
+                }
+            });
+        }
+
+        function renderKram(message) {
+            document.getElementById('app').innerHTML = `
+      <h1>Du har fått en kram 🤗</h1>
+      <p>${message}</p>
+      <p><a href="/">Skicka en egen kram</a></p>
+    `;
+        }
+
+        function renderNotFound() {
+            document.getElementById('app').innerHTML = `
+      <h1>Oj då 😢</h1>
+      <p>Kramen du letar efter finns inte längre.</p>
+      <p><a href="/">Skicka en egen kram</a></p>
+    `;
+        }
+
+        (async function () {
+            const id = getIdFromUrl();
+            if (id) {
+                const kram = await loadKram(id);
+                if (kram) {
+                    renderKram(kram.message);
+                } else {
+                    renderNotFound();
+                }
+            } else {
+                renderForm();
+            }
+        })();
+    </script>
 </body>
 
 </html>

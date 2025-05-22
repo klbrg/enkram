@@ -1,0 +1,10 @@
+# Azure Functions: ignorera lokalt installerade paket
+/api/node_modules/
+
+# Azure Functions: ignorera känsliga nycklar
+local.settings.json
+
+# Loggar och editorfiler
+.vscode/
+*.log
+.DS_Store
