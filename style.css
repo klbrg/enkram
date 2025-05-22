@@ -25,3 +25,29 @@ p {
     font-size: 1.2rem;
     color: #777;
 }
+
+.share-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1em;
+}
+
+.share-buttons button {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition: background 0.2s ease;
+    text-align: left;
+}
+
+.share-buttons button i {
+    margin-right: 8px;
+}
+
+.share-buttons button:hover {
+    background-color: #e0e0e0;
+}
