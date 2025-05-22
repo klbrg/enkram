@@ -15,7 +15,7 @@ module.exports = async function (context, req) {
         if (!resource) throw new Error("Not found");
 
         // Radera kramen efter att den visats
-        await container.item(id, id).delete();
+        // await container.item(id, id).delete();
 
         context.res = {
             status: 200,
