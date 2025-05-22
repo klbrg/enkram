@@ -21,6 +21,7 @@
     <link rel="manifest" href="/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body>
@@ -74,10 +75,24 @@
                 } else {
                     const url = new URL(window.location.href);
                     url.searchParams.set('id', result.link.split('/').pop());
+                    const encodedUrl = encodeURIComponent(url.toString());
+                    const encodedUrl = encodeURIComponent(url.toString());
                     resultDiv.innerHTML = `
-          <p>Här är din kram-länk:</p>
-          <p><a href="${url}">${url}</a></p>
-        `;
+  <h2>Din kram är redo 💌</h2>
+  <div class="share-buttons">
+    <button onclick="window.open('https://wa.me/?text=${encodedUrl}', '_blank')">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </button>
+    <button onclick="window.open('https://t.me/share/url?url=${encodedUrl}', '_blank')">
+      <i class="fab fa-telegram"></i> Telegram
+    </button>
+    <button onclick="navigator.clipboard.writeText('${url}').then(() => alert('Länk kopierad!'))">
+      <i class="fas fa-link"></i> Kopiera länk
+    </button>
+  </div>
+`;
+
+
                 }
             });
         }
