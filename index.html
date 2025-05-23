@@ -29,12 +29,12 @@
         <!-- Innehållet styrs av JavaScript -->
     </main>
     <script>
-        const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)/;
 
         function extractSpotifyId(text) {
-            const match = text.match(spotifyRegex);
+            const match = text.match(/https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/);
             return match ? match[1] : null;
         }
+
 
         async function sendKram(message) {
             const res = await fetch('/api/sendKram', {
@@ -106,24 +106,31 @@
         }
 
         function renderKram(message) {
+            const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
+            const trackId = extractSpotifyId(message);
+            const messageWithoutSpotify = message.replace(spotifyRegex, '').trim();
+
             document.getElementById('app').innerHTML = `
-      <h1>Du har fått en kram 🤗</h1>
-        <p>${message.replace(spotifyRegex, '')}</p>
-        ${message.match(spotifyRegex) ? `
+        <h1>Du har fått en kram 🤗</h1>
+        <p>${messageWithoutSpotify}</p>
+        ${trackId ? `
         <iframe style="border-radius:12px; margin-top:1em;"
-            src="https://open.spotify.com/embed/track/${extractSpotifyId(message)}?utm_source=enkram"
+            src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
             width="100%" height="152" frameBorder="0" allowfullscreen=""
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy">
         </iframe>
         ` : ''}
-    <p><a href="/" class="share-link">💌 Skicka en egen kram</a></p>
+        <p style="margin-top: 2em;"><a href="/">💌 Skicka en egen kram</a></p>
     `;
+        }
+        <p><a href="/" class="share-link">💌 Skicka en egen kram</a></p>
+        `;
         }
 
         function renderNotFound() {
             document.getElementById('app').innerHTML = `
-      <h1>Oj då 😢</h1>
+            < h1 > Oj då 😢</h1 >
       <p>Kramen du letar efter finns inte längre.</p>
       <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
     `;
