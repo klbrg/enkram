@@ -110,20 +110,21 @@
             const trackId = extractSpotifyId(message);
             const messageWithoutSpotify = message.replace(spotifyRegex, '').trim();
 
+            const embedHtml = trackId
+                ? `<iframe style="border-radius:12px; margin-top:1em;"
+         src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
+         width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+         loading="lazy"></iframe>`
+                : '';
+
             document.getElementById('app').innerHTML = `
-        <h1>Du har fått en kram 🤗</h1>
-        <p>${messageWithoutSpotify}</p>
-        ${trackId ? `
-        <iframe style="border-radius:12px; margin-top:1em;"
-            src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
-            width="100%" height="152" frameBorder="0" allowfullscreen=""
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy">
-        </iframe>
-        ` : ''}
-        <p style="margin-top: 2em;"><a href="/">💌 Skicka en egen kram</a></p>
-    `;
+    <h1>Du har fått en kram 🤗</h1>
+    <p>${messageWithoutSpotify}</p>
+    ${embedHtml}
+    <p style="margin-top: 2em;"><a href="/">💌 Skicka en egen kram</a></p>
+  `;
         }
+
         <p><a href="/" class="share-link">💌 Skicka en egen kram</a></p>
         `;
         }
