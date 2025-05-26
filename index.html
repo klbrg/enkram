@@ -70,7 +70,7 @@
         }
         function renderForm() {
             document.getElementById('app').innerHTML = `
-    <h1>Skicka en kram 🤗</h1>
+    <h1><a href="/" style="text-decoration: none; color: inherit;">Skicka en kram 🤗</a></h1>
     <form id="kramForm">
       <textarea id="message" placeholder="Skriv något från hjärtat 💌" rows="4" cols="40"></textarea><br>
       <small style="display: block; margin-top: 0.5em; color: #777;">
@@ -81,13 +81,13 @@
         <i class="fas fa-paper-plane"></i> Skicka
       </button>
     </form>
+    <div id="result"></div>
   `;
 
             const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
             const messageField = document.getElementById('message');
             const previewDiv = document.getElementById('spotify-preview');
-            let lastTrackId = null;
-
+            let lastTrackId = null; // ⬅️ spara senaste trackId
             messageField.addEventListener('input', () => {
                 const match = messageField.value.match(spotifyRegex);
                 if (match) {
@@ -158,7 +158,7 @@
 
         function renderNotFound() {
             document.getElementById('app').innerHTML = `
-            <h1> Oj då 😢</h1 >
+            <h1> Oj då 😢</h1>
       <p>Kramen du letar efter finns inte längre.</p>
       <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
     `;
@@ -169,7 +169,7 @@
             if (id) {
                 const kram = await loadKram(id);
                 if (kram) {
-                    renderKram(kram.message);
+                    renderKram(kram);
                 } else {
                     renderNotFound();
                 }
