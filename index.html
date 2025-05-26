@@ -135,6 +135,7 @@
                 document.getElementById('app').innerHTML = `
       <h2>Din kram är redo 💌</h2>
       <div class="share-buttons">
+        <button onclick="window.open('https://dis
         <button onclick="window.open('https://wa.me/?text=${encodedUrl}', '_blank')">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </button>
@@ -143,6 +144,9 @@
         </button>
         <button onclick="copyLink(this)" data-link="${url}">
           <i class="fas fa-link"></i> Kopiera länk
+        </button>
+        <button onclick="window.location.href='${url}'">
+          <i class="fa-regular fa-heart"></i> Öppna kram
         </button>
       </div>
       <p style="margin-top: 2em;"><a href="/">💌 Skicka en ny kram</a></p>
