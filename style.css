@@ -78,6 +78,7 @@ textarea#message {
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    margin-top: 1em;
 }
 
 .send-btn:hover {
