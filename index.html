@@ -67,7 +67,8 @@
       <h1>Skicka en kram 🤗</h1>
       <form id="kramForm">
        <textarea id="message" placeholder="Skriv något fint till någon du tycker om – lägg gärna till en Spotify-länk för att dela en låt 💖🎵" rows="4" cols="40"></textarea><br>
-        <button type="submit" class="send-btn">
+       <div id="spotify-preview" style="margin-top: 1em;"></div>
+       <button type="submit" class="send-btn">
         <i class="fas fa-paper-plane"></i> Skicka
         </button>
       </form>
@@ -103,50 +104,69 @@
     </div>
     <p style="margin-top: 2em;"><a href="/" class="share-link">💌 Skicka en ny kram</a></p>
   `;
-            });
-        }
+                const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
+                const messageField = document.getElementById('message');
+                const previewDiv = document.getElementById('spotify-preview');
+
+                messageField.addEventListener('input', () => {
+                    const match = messageField.value.match(spotifyRegex);
+                    if (match) {
+                        const trackId = match[1];
+                        previewDiv.innerHTML = `
+        <iframe style="border-radius:12px"
+          src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
+          width="100%" height="152" frameBorder="0" allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      `;
+                    } else {
+                        previewDiv.innerHTML = '';
+                    }
+                });
+            }
 
         function renderKram(message) {
-            const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
-            const trackId = extractSpotifyId(message);
-            const messageWithoutSpotify = message.replace(spotifyRegex, '').trim();
+                    const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
+                    const trackId = extractSpotifyId(message);
+                    const messageWithoutSpotify = message.replace(spotifyRegex, '').trim();
 
-            const embedHtml = trackId
-                ? `<iframe style="border-radius:12px; margin-top:1em;"
+                    const embedHtml = trackId
+                        ? `<iframe style="border-radius:12px; margin-top:1em;"
          src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
          width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
          loading="lazy"></iframe>`
-                : '';
+                        : '';
 
-            document.getElementById('app').innerHTML = `
+                    document.getElementById('app').innerHTML = `
     <h1>Du har fått en kram 🤗</h1>
     <p>${messageWithoutSpotify}</p>
     ${embedHtml}
     <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
   `;
-        }
+                }
 
         function renderNotFound() {
-            document.getElementById('app').innerHTML = `
+                    document.getElementById('app').innerHTML = `
             <h1> Oj då 😢</h1 >
       <p>Kramen du letar efter finns inte längre.</p>
       <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
     `;
-        }
-
-        (async function () {
-            const id = getIdFromUrl();
-            if (id) {
-                const kram = await loadKram(id);
-                if (kram) {
-                    renderKram(kram.message);
-                } else {
-                    renderNotFound();
                 }
-            } else {
-                renderForm();
-            }
-        })();
+
+                    (async function () {
+                        const id = getIdFromUrl();
+                        if (id) {
+                            const kram = await loadKram(id);
+                            if (kram) {
+                                renderKram(kram.message);
+                            } else {
+                                renderNotFound();
+                            }
+                        } else {
+                            renderForm();
+                        }
+                    })();
     </script>
 </body>
 
