@@ -8,7 +8,7 @@
         },
         {
             "route": "/*",
-            "serve": "/index.html",
+            "rewrite": "/index.html",
             "statusCode": 200
         }
     ]
