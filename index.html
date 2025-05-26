@@ -65,7 +65,7 @@
             navigator.clipboard.writeText(button.dataset.link || window.location.href);
             button.innerText = '✅ Kopierad!';
             setTimeout(() => {
-                button.innerText = '<i class="fas fa-link"></i> Kopiera länk';
+                button.innerHTML = '<i class="fas fa-link"></i> Kopiera länk';
             }, 2000);
         }
         function renderForm() {
