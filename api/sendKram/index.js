@@ -32,7 +32,7 @@ module.exports = async function (context, req) {
     const createdAt = new Date().toISOString();
     const ttl = 86400; // 24 timmar
 
-    await container.items.create({ id, cleanedMessage, createdAt, ttl });
+    await container.items.create({ id, message: cleanedMessage, createdAt, ttl });
 
     context.res = {
         status: 200,
