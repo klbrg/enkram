@@ -61,7 +61,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('id');
         }
-
+        function copyLink(button) {
+            navigator.clipboard.writeText(button.dataset.link || window.location.href);
+            button.innerText = '✅ Kopierad!';
+            setTimeout(() => {
+                button.innerText = '<i class="fas fa-link"></i> Kopiera länk';
+            }, 2000);
+        }
         function renderForm() {
             document.getElementById('app').innerHTML = `
     <h1>Skicka en kram 🤗</h1>
@@ -123,7 +129,7 @@
         <button onclick="window.open('https://t.me/share/url?url=${encodedUrl}', '_blank')">
           <i class="fab fa-telegram"></i> Telegram
         </button>
-        <button onclick="navigator.clipboard.writeText('${url}').then(() => alert('Länk kopierad!'))">
+        <button onclick="copyLink(this)" data-link="${url}">
           <i class="fas fa-link"></i> Kopiera länk
         </button>
       </div>
