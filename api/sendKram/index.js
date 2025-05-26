@@ -1,5 +1,4 @@
 const { CosmosClient } = require("@azure/cosmos");
-const crypto = require("crypto");
 const sanitizeHtml = require('sanitize-html');
 
 function sanitizeMessage(input) {
@@ -11,6 +10,16 @@ function sanitizeMessage(input) {
     // Ersätt \n med <br>
     return noHtml.replace(/\n/g, '<br>');
 }
+
+function generateShortId(length = 4) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = '';
+    for (let i = 0; i < length; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return id;
+}
+
 
 const client = new CosmosClient({
     endpoint: process.env.COSMOS_ENDPOINT,
@@ -29,7 +38,7 @@ module.exports = async function (context, req) {
         return;
     }
 
-    const id = crypto.randomBytes(4).toString("hex");
+    const id = generateShortId(4);
     const createdAt = new Date().toISOString();
     const ttl = 86400; // 24 timmar
 
