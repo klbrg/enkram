@@ -1,5 +1,16 @@
 const { CosmosClient } = require("@azure/cosmos");
 const crypto = require("crypto");
+const sanitizeHtml = require('sanitize-html');
+
+function sanitizeMessage(input) {
+    const noHtml = sanitizeHtml(input || '', {
+        allowedTags: [],       // inga taggar tillåtna
+        allowedAttributes: {}  // inga attribut tillåtna
+    });
+
+    // Ersätt \n med <br>
+    return noHtml.replace(/\n/g, '<br>');
+}
 
 const client = new CosmosClient({
     endpoint: process.env.COSMOS_ENDPOINT,
@@ -7,14 +18,6 @@ const client = new CosmosClient({
 });
 
 const container = client.database("kramDB").container("kramar");
-
-function sanitizeMessage(input) {
-    // Ta bort alla HTML-taggar
-    const noHtml = input.replace(/<[^>]*>/g, '');
-
-    // Ersätt \n med <br> för att behålla radbrytningar
-    return noHtml.replace(/\n/g, '<br>');
-}
 
 
 module.exports = async function (context, req) {
