@@ -22,6 +22,7 @@ const container = client.database("kramDB").container("kramar");
 
 module.exports = async function (context, req) {
     const message = req.body?.message?.trim() || "";
+    const trackId = req.body?.trackId || null;
     const cleanedMessage = sanitizeMessage(message);
     if (cleanedMessage.length > 500) {
         context.res = { status: 400, body: "För långt meddelande." };
@@ -32,7 +33,7 @@ module.exports = async function (context, req) {
     const createdAt = new Date().toISOString();
     const ttl = 86400; // 24 timmar
 
-    await container.items.create({ id, message: cleanedMessage, createdAt, ttl });
+    await container.items.create({ id, message: cleanedMessage, trackId: trackId, createdAt, ttl });
 
     context.res = {
         status: 200,

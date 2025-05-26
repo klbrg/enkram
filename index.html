@@ -83,33 +83,35 @@
     </form>
   `;
 
-            // 👇 Spotify preview-logik här inne!
             const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
             const messageField = document.getElementById('message');
             const previewDiv = document.getElementById('spotify-preview');
+            let lastTrackId = null;
 
             messageField.addEventListener('input', () => {
                 const match = messageField.value.match(spotifyRegex);
                 if (match) {
                     const trackId = match[1];
+                    lastTrackId = trackId; // ⬅️ spara till senare
                     previewDiv.innerHTML = `
-        <iframe style="border-radius:12px"
-          src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
-          width="100%" height="152" frameBorder="0" allowfullscreen=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy">
-        </iframe>
-      `;
-                } else {
-                    previewDiv.innerHTML = '';
+      <iframe style="border-radius:12px"
+        src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
+        width="100%" height="152" frameBorder="0" allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
+    `;
+                    // ta bort länken ur meddelandet
+                    messageField.value = messageField.value.replace(spotifyRegex, '').trim();
                 }
             });
 
-            // 👇 skicka-funktionen
             document.getElementById('kramForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const message = messageField.value;
-                const result = await sendKram(message);
+
+                // ⬇️ Skicka med trackId separat
+                const result = await sendKram({ message, trackId: lastTrackId });
 
                 if (result.error) {
                     document.getElementById('result').innerHTML = `<p>Något gick fel 😢</p>`;
@@ -138,21 +140,17 @@
             });
         }
 
-        function renderKram(message) {
-            const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
-            const trackId = extractSpotifyId(message);
-            const messageWithoutSpotify = message.replace(spotifyRegex, '').trim();
-
-            const embedHtml = trackId
+        function renderKram(kram) {
+            const embedHtml = kram.trackId
                 ? `<iframe style="border-radius:12px; margin-top:1em;"
-         src="https://open.spotify.com/embed/track/${trackId}?utm_source=enkram"
+         src="https://open.spotify.com/embed/track/${kram.trackId}?utm_source=enkram"
          width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
          loading="lazy"></iframe>`
                 : '';
 
             document.getElementById('app').innerHTML = `
     <h1>Du har fått en kram 🤗</h1>
-    <p>${messageWithoutSpotify}</p>
+    <p>${kram.message}</p>
     ${embedHtml}
     <p style="margin-top: 2em;"><a class="share-link" href="/">💌 Skicka en egen kram</a></p>
   `;

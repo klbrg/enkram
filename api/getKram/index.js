@@ -11,20 +11,22 @@ module.exports = async function (context, req) {
     const id = context.bindingData.id;
 
     try {
-        const { resource } = await container.item(id, id).read();
-        if (!resource) throw new Error("Not found");
+        const { resource: kram } = await container.item(id, id).read();
 
-        // Radera kramen efter att den visats
-        // await container.item(id, id).delete();
+        if (!kram) {
+            context.res = { status: 404 };
+            return;
+        }
 
         context.res = {
             status: 200,
-            body: { message: resource.message, createdAt: resource.createdAt }
+            body: {
+                message: kram.message,
+                trackId: kram.trackId || null
+            }
         };
     } catch (err) {
-        context.res = {
-            status: 404,
-            body: "Den här kramen finns inte längre."
-        };
+        context.log("Fel vid hämtning:", err.message);
+        context.res = { status: 500 };
     }
 };
