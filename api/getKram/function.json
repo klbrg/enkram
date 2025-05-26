@@ -5,10 +5,10 @@
             "type": "httpTrigger",
             "direction": "in",
             "name": "req",
+            "route": "getKram/{id}",
             "methods": [
                 "get"
-            ],
-            "route": "getKram/{id}"
+            ]
         },
         {
             "type": "http",
