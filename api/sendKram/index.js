@@ -8,9 +8,19 @@ const client = new CosmosClient({
 
 const container = client.database("kramDB").container("kramar");
 
+function sanitizeMessage(input) {
+    // Ta bort alla HTML-taggar
+    const noHtml = input.replace(/<[^>]*>/g, '');
+
+    // Ersätt \n med <br> för att behålla radbrytningar
+    return noHtml.replace(/\n/g, '<br>');
+}
+
+
 module.exports = async function (context, req) {
     const message = req.body?.message?.trim() || "";
-    if (message.length > 500) {
+    const cleanedMessage = sanitizeMessage(message);
+    if (cleanedMessage.length > 500) {
         context.res = { status: 400, body: "För långt meddelande." };
         return;
     }
@@ -19,10 +29,11 @@ module.exports = async function (context, req) {
     const createdAt = new Date().toISOString();
     const ttl = 86400; // 24 timmar
 
-    await container.items.create({ id, message, createdAt, ttl });
+    await container.items.create({ id, cleanedMessage, createdAt, ttl });
 
     context.res = {
         status: 200,
         body: { link: `https://enkram.se/${id}` },
     };
 };
+
