@@ -68,9 +68,9 @@
         }
 
         function getIdFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
+            return window.location.pathname.slice(1); // Tar bort första '/' och returnerar ID
         }
+
         function copyLink(button) {
             navigator.clipboard.writeText(button.dataset.link || window.location.href);
             button.innerText = '✅ Kopierad!';
@@ -128,9 +128,10 @@
                     return;
                 }
 
-                const url = new URL(window.location.href);
-                url.searchParams.set('id', result.link.split('/').pop());
-                const encodedUrl = encodeURIComponent(url.toString());
+                const id = result.link.split('/').pop();
+                const url = `${window.location.origin}/${id}`;
+                const encodedUrl = encodeURIComponent(url);
+
 
                 document.getElementById('app').innerHTML = `
       <h2>Din kram är redo 💌</h2>
