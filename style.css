@@ -37,6 +37,7 @@ textarea#message {
     resize: vertical;
     line-height: 1.5;
     box-sizing: border-box;
+    font-family: "Ubuntu", sans-serif;
 }
 
 
