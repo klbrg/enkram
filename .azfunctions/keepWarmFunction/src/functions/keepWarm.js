@@ -2,7 +2,7 @@ const https = require('https');
 const { app } = require('@azure/functions');
 
 app.timer('keepWarm', {
-    schedule: '0 */3 * * * *', // Every 3 minutes
+    schedule: '0 */2 * * * *', // Every 2 minutes
     handler: async (myTimer, context) => {
         const dummyId = Math.random().toString(36).substring(2, 10);
         const url = `https://enkram.se/api/getKram/${dummyId}`;
