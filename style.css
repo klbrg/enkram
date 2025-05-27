@@ -80,6 +80,7 @@ textarea#message {
     align-items: center;
     gap: 10px;
     margin-top: 1em;
+    font-family: QuickSand, sans-serif;
 }
 
 .send-btn:hover {
