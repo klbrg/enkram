@@ -81,7 +81,6 @@ textarea#message {
     gap: 10px;
     margin-top: 1em;
     font-family: QuickSand, sans-serif;
-    font-weight: bold;
 }
 
 .send-btn:hover {
