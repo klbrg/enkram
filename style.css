@@ -11,6 +11,11 @@ body {
     text-align: center;
 }
 
+a {
+    color: #ff6f61;
+    text-decoration: none;
+}
+
 .container {
     max-width: 600px;
     padding: 1rem;
