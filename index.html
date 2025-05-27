@@ -71,7 +71,7 @@
 
         function copyLink(button) {
             navigator.clipboard.writeText(button.dataset.link || window.location.href);
-            button.innerText = '✅ Kopierad!';
+            button.innerHTML = '<i class="fa-regular fa-clipboard"></i> Kopierad!';
             setTimeout(() => {
                 button.innerHTML = '<i class="fas fa-link"></i> Kopiera länk';
             }, 2000);
