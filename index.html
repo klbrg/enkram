@@ -91,7 +91,7 @@
     <div id="result"></div>
   `;
 
-            const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
+            const spotifyRegex = /https:\/\/(?:open\.spotify\.com\/track|spotify\.link)\/([a-zA-Z0-9]+)(\?[^ ]*)?/;
             const messageField = document.getElementById('message');
             const previewDiv = document.getElementById('spotify-preview');
             let lastTrackId = null; // ⬅️ spara senaste trackId
