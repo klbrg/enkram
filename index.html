@@ -37,7 +37,7 @@
     <script>
 
         function extractSpotifyId(text) {
-            const match = text.match(/https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)(\?[^ ]*)?/);
+            const match = text.match(/https:\/\/(?:open\.spotify\.com\/track|spotify\.link)\/([a-zA-Z0-9]+)(\?[^ ]*)?/);
             return match ? match[1] : null;
         }
 
