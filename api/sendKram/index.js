@@ -21,6 +21,21 @@ function generateShortId(length = 4) {
 }
 
 module.exports = async function (context, req) {
+    const env = {
+        ran: true,
+        node: process.version,
+        hasEndpoint: !!process.env.COSMOS_ENDPOINT,
+        hasKey: !!process.env.COSMOS_KEY,
+        keyLen: (process.env.COSMOS_KEY || '').length,
+        endpointTail: (process.env.COSMOS_ENDPOINT || '').slice(-32)
+    };
+
+    // Temporary probe: confirm the handler runs and surface env presence (no Cosmos).
+    if ((req.query && req.query.probe) || (req.body && req.body.message === '__probe__')) {
+        context.res = { status: 200, headers: { 'Content-Type': 'application/json' }, body: { probe: env } };
+        return;
+    }
+
     try {
         const message = req.body?.message?.trim() || "";
         const trackId = req.body?.trackId || null;
@@ -48,8 +63,9 @@ module.exports = async function (context, req) {
         };
     } catch (err) {
         context.log("sendKram error:", err && err.name, err && err.code, err && err.message);
+        // Temporary: return 200 so the SWA platform doesn't strip the diagnostic body.
         context.res = {
-            status: 500,
+            status: 200,
             headers: { 'Content-Type': 'application/json' },
             body: {
                 diag: {
@@ -57,10 +73,7 @@ module.exports = async function (context, req) {
                     code: err && err.code,
                     statusCode: err && err.statusCode,
                     message: ((err && err.message) || '').slice(0, 500),
-                    hasEndpoint: !!process.env.COSMOS_ENDPOINT,
-                    hasKey: !!process.env.COSMOS_KEY,
-                    keyLen: (process.env.COSMOS_KEY || '').length,
-                    endpointTail: (process.env.COSMOS_ENDPOINT || '').slice(-32)
+                    env
                 }
             }
         };
