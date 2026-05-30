@@ -531,40 +531,65 @@ textarea#message:focus {
 .restart .ico { width: 1.05em; height: 1.05em; }
 
 /* ---------- Receive (kram) ---------- */
-.kram {
-    margin: 0 0 1.3rem;
-    min-height: 240px;
-    padding: clamp(2rem, 7vw, 3.25rem) clamp(1.4rem, 5vw, 2.25rem);
+/* Receive view is full-bleed: the container drops its card styling
+   so the hug fills the whole screen with no box around it. */
+body.kram-page {
+    background: var(--bg);
+}
+
+body.kram-page .container {
+    width: 100%;
+    max-width: 760px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: clamp(1.5rem, 6vw, 3rem);
+}
+
+.kram-view {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+    align-items: center;
+    gap: 1.6rem;
+    text-align: center;
 }
 
-.kram-glow { display: none; }
-
-.kram-mark {
-    display: grid;
-    place-items: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    margin: 0 auto 0.9rem;
-    color: #fff;
-    background: var(--coral);
-    border-radius: 50%;
+.kram-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--coral-deep);
 }
 
-.kram-mark .ico { width: 1.25rem; height: 1.25rem; }
+.kram-eyebrow .ico { width: 1.05em; height: 1.05em; }
 
 .kram-msg {
     margin: 0;
-    font-size: clamp(1.45rem, 5vw, 1.95rem);
-    line-height: 1.45;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
     color: var(--ink);
     word-break: break-word;
+    text-wrap: balance;
 }
+
+.kram-msg.xl { font-size: clamp(2.4rem, 10vw, 4.25rem); max-width: 14ch; }
+.kram-msg.lg { font-size: clamp(1.9rem, 7vw, 3rem); max-width: 18ch; }
+.kram-msg.md { font-size: clamp(1.4rem, 5vw, 2.05rem); line-height: 1.35; max-width: 26ch; }
+
+.kram-restart {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    color: var(--coral-deep);
+}
+
+.kram-restart .ico { width: 1.05em; height: 1.05em; }
 
 .kram-track {
     margin-top: 1.2rem;

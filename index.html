@@ -341,19 +341,17 @@
                     </a>
                 </div>` : '';
 
+            const plain = (kram.message || '').replace(/<[^>]+>/g, '');
+            const size = plain.length <= 40 ? 'xl' : plain.length <= 120 ? 'lg' : 'md';
+
+            document.body.classList.add('kram-page');
             app.innerHTML = `
-                <header class="head reveal">
-                    <span class="badge">${icon('heart')} En kram till dig</span>
-                    <h1>Du har fått en <em>kram</em></h1>
-                </header>
-                <article class="kram reveal" style="--d:1">
-                    <div class="kram-glow"></div>
-                    <div class="kram-mark">${icon('heart')}</div>
-                    <p class="kram-msg">${kram.message || ''}</p>
+                <div class="kram-view">
+                    <p class="kram-eyebrow">${icon('heart')} En kram till dig</p>
+                    <p class="kram-msg ${size}">${kram.message || ''}</p>
                     ${track}
-                </article>
-                <p class="note reveal" style="--d:2">${icon('clock')} Kramar lever i 24 timmar.</p>
-                <p class="restart reveal" style="--d:3"><a href="/">${icon('heart')} Skicka en egen kram</a></p>
+                    <a class="kram-restart" href="/">${icon('heart')} Skicka en egen kram</a>
+                </div>
             `;
         }
 
