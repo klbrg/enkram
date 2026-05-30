@@ -15,5 +15,8 @@
             "/favicon.ico",
             "/style.css"
         ]
+    },
+    "platform": {
+        "apiRuntime": "node:20"
     }
 }
