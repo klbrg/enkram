@@ -161,10 +161,11 @@
             function renderSongEmpty() {
                 song.innerHTML = `
                     <div class="song-add">
-                        <span class="song-add-ico">${icon('spotify')}</span>
+                        <a class="song-add-ico" href="https://open.spotify.com/search" target="_blank"
+                            rel="noopener noreferrer" aria-label="Öppna Spotify" title="Öppna Spotify">${icon('spotify')}</a>
                         <input type="text" id="songInput" class="song-input" inputmode="url"
                             autocomplete="off" spellcheck="false"
-                            placeholder="Lägg till en låt från Spotify…" aria-label="Spotify-länk">
+                            placeholder="klistra in en låt från Spotify" aria-label="Spotify-länk">
                     </div>`;
                 document.getElementById('songInput').addEventListener('input', (e) => {
                     const m = e.target.value.match(SPOTIFY_RE);

@@ -358,6 +358,14 @@ textarea#message:focus {
 .song-add-ico {
     display: flex;
     color: var(--spotify);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.song-add-ico:hover {
+    transform: scale(1.12);
+    opacity: 0.85;
 }
 
 .song-add-ico .ico {
