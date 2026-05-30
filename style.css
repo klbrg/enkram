@@ -295,7 +295,7 @@ h1 em {
 textarea#message {
     width: 100%;
     min-height: 168px;
-    padding: 1.1rem 1.15rem;
+    padding: 1.1rem 1.15rem 2.3rem;
     font-family: var(--font-body);
     font-size: 1.08rem;
     line-height: 1.6;
@@ -318,90 +318,149 @@ textarea#message:focus {
     box-shadow: var(--ring);
 }
 
-.field-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 0.55rem;
-    padding: 0 0.2rem;
-}
-
-.hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    font-size: 0.86rem;
-    color: var(--ink-soft);
-}
-
-.hint .ico {
-    color: var(--spotify);
-    width: 1.05em;
-    height: 1.05em;
-}
-
-.hint a {
-    color: var(--ink);
-    font-weight: 600;
-    text-decoration: underline;
-    text-decoration-color: rgba(29, 185, 84, 0.45);
-    text-underline-offset: 2px;
-}
-
 .counter {
-    font-size: 0.82rem;
+    position: absolute;
+    right: 0.7rem;
+    bottom: 0.6rem;
+    font-size: 0.74rem;
     font-variant-numeric: tabular-nums;
     color: var(--ink-faint);
-    white-space: nowrap;
+    background: rgba(255, 251, 246, 0.8);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    pointer-events: none;
 }
 
 .counter.warn {
-    color: var(--coral-deep);
-    font-weight: 600;
+    color: #fff;
+    background: var(--coral);
 }
 
-/* ---------- Spotify preview ---------- */
-.spotify-preview {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.75, 0.2, 1);
-}
-
-.spotify-preview.open {
-    grid-template-rows: 1fr;
-}
-
-.spotify-preview > .sp-inner {
-    overflow: hidden;
-    min-height: 0;
-}
-
-.track-chip {
+/* ---------- Add a song ---------- */
+.song-add {
     display: flex;
     align-items: center;
-    gap: 0.6em;
-    margin-bottom: 0.7rem;
-    padding: 0.5rem 0.6rem 0.5rem 0.8rem;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--ink);
-    background: rgba(29, 185, 84, 0.1);
-    border: 1px solid rgba(29, 185, 84, 0.25);
-    border-radius: 999px;
+    gap: 0.7rem;
+    padding: 0.7rem 0.85rem;
+    background: rgba(29, 185, 84, 0.06);
+    border: 1.5px dashed rgba(29, 185, 84, 0.45);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.track-chip .ico:first-child {
+.song-add:focus-within {
+    border-style: solid;
+    border-color: var(--spotify);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(29, 185, 84, 0.16);
+}
+
+.song-add-ico {
+    display: flex;
     color: var(--spotify);
 }
 
-.track-chip span {
-    flex: 1;
+.song-add-ico .ico {
+    width: 1.45rem;
+    height: 1.45rem;
 }
 
-.track-remove {
+.song-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    color: var(--ink);
+}
+
+.song-input::placeholder {
+    color: var(--ink-soft);
+}
+
+.song-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.55rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 246, 240, 0.6));
+    border: 1px solid rgba(29, 185, 84, 0.32);
+    border-radius: var(--radius-sm);
+    animation: reveal 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.song-card-main {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex: 1;
+    min-width: 0;
+    color: var(--ink);
+}
+
+.song-card-main:hover .song-title {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.song-art {
+    width: 50px;
+    height: 50px;
+    flex: none;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--spotify);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    box-shadow: 0 5px 12px -5px rgba(0, 0, 0, 0.35);
+}
+
+.song-art.loading {
+    background: linear-gradient(100deg, #efe6df 30%, #faf3ec 50%, #efe6df 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+    to { background-position: -200% 0; }
+}
+
+.song-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    min-width: 0;
+}
+
+.song-title {
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-sub {
     display: inline-flex;
-    padding: 0.25em;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--spotify);
+}
+
+.song-sub .ico {
+    width: 0.95em;
+    height: 0.95em;
+}
+
+.song-remove {
+    display: inline-flex;
+    padding: 0.4em;
     color: var(--ink-soft);
     background: transparent;
     border: none;
@@ -410,16 +469,9 @@ textarea#message:focus {
     transition: background 0.18s ease, color 0.18s ease;
 }
 
-.track-remove:hover {
+.song-remove:hover {
     background: rgba(63, 35, 28, 0.08);
     color: var(--ink);
-}
-
-.spotify-preview iframe {
-    display: block;
-    width: 100%;
-    border: 0;
-    border-radius: 12px;
 }
 
 /* ---------- Buttons ---------- */

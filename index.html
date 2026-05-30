@@ -86,6 +86,18 @@
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
         }
 
+        // Fetch track title + album art via Spotify's public oEmbed (CORS-enabled) for a nice preview card.
+        async function fetchTrackMeta(id) {
+            try {
+                const res = await fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/track/${id}`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                return { title: data.title || null, thumb: data.thumbnail_url || null };
+            } catch (e) {
+                return null;
+            }
+        }
+
         // ---------- API ----------
         async function sendKram(payload) {
             const res = await fetch('/api/sendKram', {
@@ -119,22 +131,16 @@
                     <label class="sr-only" for="message">Din hälsning</label>
                     <div class="field reveal" style="--d:1">
                         <textarea id="message" name="message" rows="5" maxlength="500"
-                            autocomplete="off" aria-describedby="hint counter"
+                            autocomplete="off" aria-describedby="counter"
                             placeholder="Skriv något från hjärtat…"></textarea>
-                        <div class="field-foot">
-                            <span class="hint" id="hint">${icon('spotify')} Klistra in en
-                                <a href="https://open.spotify.com/search" target="_blank" rel="noopener noreferrer">Spotify</a>-länk för extra känsla</span>
-                            <span class="counter" id="counter">0 / 500</span>
-                        </div>
+                        <span class="counter" id="counter" aria-live="off">0 / 500</span>
                     </div>
-                    <div class="spotify-preview" id="spotify-preview" aria-live="polite">
-                        <div class="sp-inner"></div>
-                    </div>
-                    <button type="submit" class="btn btn-primary reveal" id="sendBtn" style="--d:2" disabled>
+                    <div class="song reveal" id="song" style="--d:2"></div>
+                    <button type="submit" class="btn btn-primary reveal" id="sendBtn" style="--d:3" disabled>
                         <span class="btn-label">${icon('plane')} Skicka kram</span>
                         <span class="btn-spinner"></span>
                     </button>
-                    <p class="note reveal" style="--d:3">${icon('clock')} Kramen finns kvar i 24 timmar, sen försvinner den.</p>
+                    <p class="note reveal" style="--d:4">${icon('clock')} Kramen finns kvar i 24 timmar, sen försvinner den.</p>
                 </form>
                 <div class="result" id="result" aria-live="assertive"></div>
             `;
@@ -142,8 +148,7 @@
             const field = document.getElementById('message');
             const counter = document.getElementById('counter');
             const sendBtn = document.getElementById('sendBtn');
-            const preview = document.getElementById('spotify-preview');
-            const previewInner = preview.querySelector('.sp-inner');
+            const song = document.getElementById('song');
             let trackId = null;
 
             function refresh() {
@@ -153,30 +158,57 @@
                 sendBtn.disabled = field.value.trim().length === 0 && !trackId;
             }
 
-            function showTrack(id) {
+            function renderSongEmpty() {
+                song.innerHTML = `
+                    <div class="song-add">
+                        <span class="song-add-ico">${icon('spotify')}</span>
+                        <input type="text" id="songInput" class="song-input" inputmode="url"
+                            autocomplete="off" spellcheck="false"
+                            placeholder="Lägg till en låt från Spotify…" aria-label="Spotify-länk">
+                    </div>`;
+                document.getElementById('songInput').addEventListener('input', (e) => {
+                    const m = e.target.value.match(SPOTIFY_RE);
+                    if (m) { e.target.value = ''; setTrack(m[1]); }
+                });
+            }
+
+            function renderSongCard(state) {
+                const artStyle = state.thumb ? ` style="background-image:url('${state.thumb}')"` : '';
+                song.innerHTML = `
+                    <div class="song-card">
+                        <a class="song-card-main" href="https://open.spotify.com/track/${state.id}" target="_blank" rel="noopener noreferrer">
+                            <span class="song-art${state.loading ? ' loading' : ''}"${artStyle}>${state.thumb ? '' : icon('music')}</span>
+                            <span class="song-meta">
+                                <span class="song-title">${state.loading ? 'Hämtar låt…' : (state.title || 'Spotify-låt')}</span>
+                                <span class="song-sub">${icon('spotify')} Spotify</span>
+                            </span>
+                        </a>
+                        <button type="button" class="song-remove" id="songRemove" aria-label="Ta bort låt">${icon('close')}</button>
+                    </div>`;
+                document.getElementById('songRemove').addEventListener('click', clearTrack);
+            }
+
+            async function setTrack(id) {
                 trackId = id;
-                previewInner.innerHTML = `
-                    <div class="track-chip">
-                        ${icon('music')}<span>Låt tillagd</span>
-                        <button type="button" class="track-remove" id="removeTrack" aria-label="Ta bort låt">${icon('close')}</button>
-                    </div>
-                    ${spotifyEmbed(id)}`;
-                preview.classList.add('open');
-                document.getElementById('removeTrack').addEventListener('click', clearTrack);
+                renderSongCard({ id, loading: true });
+                refresh();
+                const meta = await fetchTrackMeta(id);
+                if (trackId === id) renderSongCard({ id, title: meta && meta.title, thumb: meta && meta.thumb });
             }
 
             function clearTrack() {
                 trackId = null;
-                preview.classList.remove('open');
-                previewInner.innerHTML = '';
+                renderSongEmpty();
                 refresh();
+                const input = document.getElementById('songInput');
+                if (input) input.focus();
             }
 
             field.addEventListener('input', () => {
                 const match = field.value.match(SPOTIFY_RE);
                 if (match) {
                     field.value = field.value.replace(SPOTIFY_RE, '').trim();
-                    showTrack(match[1]);
+                    setTrack(match[1]);
                 }
                 refresh();
             });
@@ -204,6 +236,8 @@
                 const url = `${window.location.origin}/${id}`;
                 renderShare({ url, message, hasTrack: !!trackId });
             });
+
+            renderSongEmpty();
         }
 
         // ---------- Screen: kram is ready to share ----------
