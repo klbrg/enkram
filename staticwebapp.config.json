@@ -13,7 +13,10 @@
             "/api/*",
             "/favicon/*",
             "/favicon.ico",
-            "/style.css"
+            "/style.css",
+            "/robots.txt",
+            "/sitemap.xml",
+            "/og-image.png"
         ]
     },
     "platform": {
