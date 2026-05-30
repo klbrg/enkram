@@ -23,6 +23,7 @@
     --radius-sm: 12px;
     --ring: 0 0 0 3px rgba(255, 111, 94, 0.25);
     --font: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-display: "Fraunces", Georgia, serif;
 
     color-scheme: light;
 }
@@ -39,7 +40,10 @@ body {
     padding: clamp(1rem, 4vw, 2.5rem);
     font-family: var(--font);
     color: var(--ink);
-    background: var(--bg);
+    background:
+        radial-gradient(115% 75% at 50% -10%, #fff1e3 0%, rgba(255, 241, 227, 0) 55%),
+        linear-gradient(170deg, #fdf6ef 0%, #ffe9e0 100%);
+    background-attachment: fixed;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -74,6 +78,8 @@ a {
 
 /* ---------- Card ---------- */
 .container {
+    position: relative;
+    z-index: 1;
     width: min(520px, 100%);
     min-width: 0;
     padding: clamp(1.5rem, 5vw, 2.5rem);
@@ -92,15 +98,18 @@ a {
 
 h1 {
     margin: 0;
-    font-weight: 800;
-    font-size: clamp(1.8rem, 6vw, 2.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(2rem, 6.5vw, 2.7rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
     color: var(--ink);
 }
 
 h1 em {
-    font-style: normal;
+    font-style: italic;
+    font-weight: 500;
     color: var(--coral);
 }
 
@@ -119,7 +128,15 @@ h1 em {
 .heart-beat {
     display: inline-block;
     color: var(--coral);
-    vertical-align: -0.05em;
+    vertical-align: -0.06em;
+    transform-origin: center;
+    animation: beat 2.4s ease-in-out infinite;
+}
+
+@keyframes beat {
+    0%, 60%, 100% { transform: scale(1); }
+    20% { transform: scale(1.18); }
+    40% { transform: scale(1.06); }
 }
 
 /* ---------- Badge ---------- */
@@ -529,10 +546,6 @@ textarea#message:focus {
 /* ---------- Receive (kram) ---------- */
 /* Receive view is full-bleed: the container drops its card styling
    so the hug fills the whole screen with no box around it. */
-body.kram-page {
-    background: var(--bg);
-}
-
 body.kram-page .container {
     width: 100%;
     max-width: 760px;
@@ -564,7 +577,9 @@ body.kram-page .container {
 
 .kram-msg {
     margin: 0;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 600;
     line-height: 1.18;
     letter-spacing: -0.01em;
     color: var(--ink);
@@ -637,15 +652,41 @@ body.kram-page .container {
     opacity: 1;
 }
 
+/* ---------- Ambient floating hearts ---------- */
+.hearts {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.float-heart {
+    position: absolute;
+    bottom: -3rem;
+    color: var(--coral);
+    opacity: 0;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    0% { opacity: 0; transform: translateY(0) scale(0.7) rotate(0deg); }
+    15% { opacity: 0.26; }
+    85% { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(-108svh) scale(1) rotate(12deg); }
+}
+
 /* ---------- Small screens ---------- */
 @media (max-width: 420px) {
     .container { padding: 1.4rem 1.2rem; }
-    .kram-msg { font-size: 1.12rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
     }
+    .hearts { display: none; }
     .btn-spinner { animation: spin 0.7s linear infinite !important; }
 }

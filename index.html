@@ -43,7 +43,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
@@ -375,8 +375,29 @@
                 </div>`;
         }
 
+        // ---------- Ambient floating hearts ----------
+        function spawnHearts(n) {
+            const layer = document.createElement('div');
+            layer.className = 'hearts';
+            layer.setAttribute('aria-hidden', 'true');
+            for (let i = 0; i < n; i++) {
+                const h = document.createElement('span');
+                h.className = 'float-heart';
+                const size = 10 + Math.random() * 20;
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.width = size + 'px';
+                h.style.height = size + 'px';
+                h.style.animationDuration = (11 + Math.random() * 9) + 's';
+                h.style.animationDelay = (Math.random() * 10) + 's';
+                h.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" aria-hidden="true"><path d="${PATHS.heart}"/></svg>`;
+                layer.appendChild(h);
+            }
+            document.body.appendChild(layer);
+        }
+
         // ---------- Boot ----------
         (async function () {
+            spawnHearts(7);
             const id = getIdFromUrl();
             if (id) {
                 // Ephemeral hug pages (24h) shouldn't be indexed.
