@@ -533,7 +533,11 @@ textarea#message:focus {
 /* ---------- Receive (kram) ---------- */
 .kram {
     margin: 0 0 1.3rem;
-    padding: 1.6rem 1.4rem;
+    min-height: 240px;
+    padding: clamp(2rem, 7vw, 3.25rem) clamp(1.4rem, 5vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -556,8 +560,8 @@ textarea#message:focus {
 
 .kram-msg {
     margin: 0;
-    font-size: 1.2rem;
-    line-height: 1.55;
+    font-size: clamp(1.45rem, 5vw, 1.95rem);
+    line-height: 1.45;
     color: var(--ink);
     word-break: break-word;
 }
