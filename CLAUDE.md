@@ -29,8 +29,8 @@ So a URL like `https://enkram.se/aB3x` serves `index.html`, and the JS interpret
 
 ### Data flow
 
-- **Create**: `POST /api/sendKram` with `{ message, trackId }` → `api/sendKram/index.js` sanitizes the message (strips all HTML via `sanitize-html`, converts `\n`→`<br>`), enforces a 500-char limit, generates a random **4-char** ID, writes to Cosmos with `ttl: 86400` (24h), returns `{ link: "https://enkram.se/<id>" }`.
-- **Read**: `GET /api/getKram/{id}` → `api/getKram/index.js` reads `container.item(id, id)` (the partition key **is** the id) and returns `{ message, trackId }`, or 404/500.
+- **Create**: `POST /api/sendKram` with `{ message, trackId }` → `api/sendKram/index.js` sanitizes the message (strips all HTML via `sanitize-html`, enforces a 500-char limit **before** converting `\n`→`<br>`), validates `trackId` against `/^[a-zA-Z0-9]{8,40}$/` (else stores `null`), generates a random **4-char** crypto-random ID (retries on 409 collision, growing to 5 chars after 3 attempts), writes to Cosmos with `ttl: 86400` (24h), returns `{ id, link: "https://enkram.se/<id>" }`.
+- **Read**: `GET /api/getKram/{id}` → `api/getKram/index.js` reads `container.item(id, id)` (the partition key **is** the id) and returns `{ message, trackId, expiresAt }` (`expiresAt` = `(_ts + ttl) * 1000`, epoch ms; used by the client for the "kramen bleknar bort om X" note), or 404/500.
 
 **Cosmos DB**: database `kramDB`, container `kramar`, partitioned on `/id`. Item shape: `{ id, message, trackId, createdAt, ttl }`. The container must have TTL enabled for per-item `ttl` to take effect — this is why hugs disappear ("Kramen du letar efter finns inte längre").
 
@@ -72,6 +72,6 @@ The API needs Cosmos credentials. Locally, put them in `api/local.settings.json`
 
 ## Gotchas
 
-- The production URL `https://enkram.se/<id>` is **hard-coded** in `api/sendKram/index.js` rather than derived from the request host.
-- 4-char IDs over a 62-char alphabet (~14.7M combinations) are generated with **no collision check** on create.
+- The production URL `https://enkram.se/<id>` is **hard-coded** in `api/sendKram/index.js` rather than derived from the request host (the client rebuilds the link from `location.origin`, so previews still work).
 - Because everything is inline in `index.html` with no build, "the app" and "the source" are the same file — edit `index.html` directly.
+- The receive page is **two-stage**: `renderKram` shows a sealed envelope (tap to open, heart burst) and then `renderKramContent` shows the actual message. Playwright-style automation must force-click `#envelope` — its idle float animation makes the element permanently "unstable".

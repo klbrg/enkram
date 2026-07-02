@@ -49,6 +49,17 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* Subtil papperskänsla över hela ytan. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 ::selection {
     background: rgba(255, 111, 94, 0.22);
 }
@@ -111,6 +122,9 @@ h1 em {
     font-style: italic;
     font-weight: 500;
     color: var(--coral);
+    padding: 0 0.06em;
+    background: linear-gradient(to top, rgba(255, 111, 94, 0.16) 0.28em, transparent 0.28em);
+    border-radius: 2px;
 }
 
 .lede {
@@ -374,16 +388,24 @@ textarea#message:focus {
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background 0.15s ease, opacity 0.15s ease;
+    transition: background 0.15s ease, opacity 0.15s ease,
+        transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-primary {
     color: #fff;
     background: var(--coral);
+    box-shadow: 0 2px 12px rgba(232, 84, 64, 0.28);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     background: var(--coral-deep);
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 18px rgba(232, 84, 64, 0.32);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0) scale(0.99);
 }
 
 .btn-primary:disabled {
@@ -446,6 +468,57 @@ textarea#message:focus {
 }
 
 /* ---------- Share screen ---------- */
+.link-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--coral-deep);
+    background: rgba(255, 111, 94, 0.08);
+    border: 1.5px dashed rgba(232, 84, 64, 0.45);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.link-pill:hover {
+    background: rgba(255, 111, 94, 0.13);
+}
+
+.link-pill.copied {
+    color: #17953f;
+    border-color: rgba(37, 211, 102, 0.6);
+    background: rgba(37, 211, 102, 0.08);
+}
+
+.link-pill-url {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.link-pill-ico {
+    display: inline-flex;
+}
+
+.link-pill-copied {
+    font-size: 0.83rem;
+    font-weight: 600;
+}
+
+.link-pill-copied:empty {
+    display: none;
+}
+
+
 .card-preview {
     margin-bottom: 1.3rem;
     padding: 1.1rem 1.2rem;
@@ -500,12 +573,13 @@ textarea#message:focus {
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .share-btn:hover {
     background: rgba(255, 111, 94, 0.06);
     border-color: var(--coral);
+    transform: translateY(-1px);
 }
 
 .share-ico {
@@ -520,6 +594,7 @@ textarea#message:focus {
 
 .share-ico .ico { width: 1.15rem; height: 1.15rem; }
 
+.share-btn.native .share-ico { background: var(--ink); }
 .share-btn.wa .share-ico { background: var(--whatsapp); }
 .share-btn.tg .share-ico { background: var(--telegram); }
 .share-btn.copy .share-ico { background: var(--coral); }
@@ -542,6 +617,166 @@ textarea#message:focus {
 
 .restart a:hover { text-decoration: underline; }
 .restart .ico { width: 1.05em; height: 1.05em; }
+
+/* ---------- Envelope (receive, stage 1) ---------- */
+.env-stage {
+    gap: 1.5rem;
+}
+
+.env-hint {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+}
+
+.envelope {
+    position: relative;
+    width: min(330px, 76vw);
+    aspect-ratio: 8 / 5;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    perspective: 700px;
+    filter: drop-shadow(0 16px 28px rgba(180, 100, 80, 0.2));
+    transition: scale 0.2s ease;
+}
+
+/* rise (från .reveal) + evig svävning; `translate` krockar inte med transform */
+.envelope.reveal {
+    animation:
+        rise 0.55s cubic-bezier(0.22, 0.9, 0.3, 1) calc(var(--d, 0) * 95ms) forwards,
+        envFloat 3.6s ease-in-out 1s infinite;
+}
+
+@keyframes envFloat {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -7px; }
+}
+
+.envelope:hover {
+    scale: 1.03;
+}
+
+.env-body {
+    position: absolute;
+    inset: 0;
+    background: #fff9f3;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* sidfalsarna som möts i botten */
+.env-body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to bottom right, transparent 49.6%, #fdeee1 50%) top left / 50% 100% no-repeat,
+        linear-gradient(to bottom left, transparent 49.6%, #fdeee1 50%) top right / 50% 100% no-repeat;
+}
+
+.env-letter {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 9%;
+    height: 70%;
+    background-color: #fff;
+    background-image: repeating-linear-gradient(to bottom, var(--line) 0 2px, transparent 2px 14px);
+    background-size: 70% 60%;
+    background-position: center 60%;
+    background-repeat: no-repeat;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    opacity: 0;
+    translate: 0 8%;
+    transition: translate 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) 0.12s, opacity 0.3s ease 0.12s;
+}
+
+.env-flap {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 55%;
+    background: #ffe6d6;
+    border-radius: 12px 12px 0 0;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    backface-visibility: hidden;
+    transition: transform 0.5s cubic-bezier(0.3, 0.8, 0.4, 1);
+}
+
+.env-seal {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    width: 3.4rem;
+    height: 3.4rem;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: var(--coral);
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(232, 84, 64, 0.4);
+    translate: -50% -50%;
+    transition: scale 0.35s ease, opacity 0.3s ease;
+    animation: beat 2.4s ease-in-out infinite;
+}
+
+.env-seal .ico {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* `both` håller opacity 1 under fördröjningen medan fliken öppnas. */
+.envelope.opening {
+    animation: envFade 0.35s ease 0.28s both;
+}
+
+@keyframes envFade {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.envelope.opening .env-flap {
+    transform: rotateX(180deg);
+}
+
+.envelope.opening .env-seal {
+    scale: 1.6;
+    opacity: 0;
+}
+
+.envelope.opening .env-letter {
+    opacity: 1;
+    translate: 0 -38%;
+}
+
+/* ---------- Heart burst ---------- */
+.burst {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.burst-heart {
+    position: absolute;
+    color: var(--coral);
+    opacity: 0;
+    animation: burstFly 1.15s cubic-bezier(0.15, 0.6, 0.4, 1) forwards;
+}
+
+@keyframes burstFly {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+    70% { opacity: 0.9; }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot));
+    }
+}
 
 /* ---------- Receive (kram) ---------- */
 /* Receive view is full-bleed: the container drops its card styling
@@ -591,6 +826,11 @@ body.kram-page .container {
 .kram-msg.lg { font-size: clamp(1.9rem, 7vw, 3rem); max-width: 18ch; }
 .kram-msg.md { font-size: clamp(1.4rem, 5vw, 2.05rem); line-height: 1.35; max-width: 26ch; }
 
+.kram-msg:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 .kram-restart {
     display: inline-flex;
     align-items: center;
@@ -601,6 +841,17 @@ body.kram-page .container {
 }
 
 .kram-restart .ico { width: 1.05em; height: 1.05em; }
+
+.kram-fade {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    font-size: 0.83rem;
+    color: var(--ink-faint);
+}
+
+.kram-fade .ico { width: 1em; height: 1em; }
 
 .kram-track {
     margin-top: 1.2rem;
@@ -635,7 +886,9 @@ body.kram-page .container {
 }
 
 .loader-heart {
+    display: inline-flex;
     color: var(--coral);
+    animation: beat 1.2s ease-in-out infinite;
 }
 
 .loader-heart .ico { width: 2.4rem; height: 2.4rem; }
@@ -647,10 +900,34 @@ body.kram-page .container {
     margin-bottom: 0.7rem;
 }
 
-/* Reveal classes are kept in markup but render statically (no motion). */
+/* ---------- Entrance motion ---------- */
+/* Staggered via --d (0,1,2,…) satt inline i markupen. */
 .reveal {
-    opacity: 1;
+    opacity: 0;
+    animation: rise 0.55s cubic-bezier(0.22, 0.9, 0.3, 1) calc(var(--d, 0) * 95ms) forwards;
 }
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Länk-stylad knapp (t.ex. "Försök igen") */
+.link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--coral-deep);
+    cursor: pointer;
+}
+
+.link-btn:hover { text-decoration: underline; }
+.link-btn .ico { width: 1.05em; height: 1.05em; }
 
 /* ---------- Ambient floating hearts ---------- */
 .hearts {
@@ -684,8 +961,10 @@ body.kram-page .container {
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.001ms !important;
+        animation-delay: 0.001ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
+        transition-delay: 0.001ms !important;
     }
     .hearts { display: none; }
     .btn-spinner { animation: spin 0.7s linear infinite !important; }
