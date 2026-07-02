@@ -18,11 +18,15 @@ module.exports = async function (context, req) {
             return;
         }
 
+        // _ts är Cosmos senast-ändrad (epoch-sekunder); ttl räknas därifrån.
+        const expiresAt = (kram._ts && kram.ttl) ? (kram._ts + kram.ttl) * 1000 : null;
+
         context.res = {
             status: 200,
             body: {
                 message: kram.message,
-                trackId: kram.trackId || null
+                trackId: kram.trackId || null,
+                expiresAt
             }
         };
     } catch (err) {
